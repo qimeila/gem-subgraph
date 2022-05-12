@@ -1,60 +1,73 @@
-import { BigInt } from "@graphprotocol/graph-ts"
-import { Contract, OwnershipTransferred } from "../generated/Contract/Contract"
-import { ExampleEntity } from "../generated/schema"
+import { BigInt,log } from "@graphprotocol/graph-ts"
+import { Contract, BatchBuyWithETHCall,BatchBuyWithERC20sCall,BatchBuyFromOpenSeaCall } from "../generated/Contract/Contract"
+import { BuyEntity} from "../generated/schema"
 
-export function handleOwnershipTransferred(event: OwnershipTransferred): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
 
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+export function handlebatchBuyWithETH(call: BatchBuyWithETHCall): void {
+  log.info(call.transaction.hash.toHexString()+" "+"BatchBuyWithETHCall",[]);
+  let buyEntity = BuyEntity.load(call.transaction.from.toHex())
+  if (!buyEntity) {
+    buyEntity = new BuyEntity(call.transaction.from.toHex())
+    buyEntity.ethAmount=new BigInt(0)
+    buyEntity.token=["0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"]
+    buyEntity.tokenAmount=[new BigInt(0)]
   }
+  buyEntity.ethAmount = call.transaction.value.plus(buyEntity.ethAmount)
+  log.info(call.transaction.from.toHex()+" "+"ethAmount"+" "+buyEntity.ethAmount.toString(),[]);
+  buyEntity.save()
+}
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+export function handlebatchBuyWithERC20s(call: BatchBuyWithERC20sCall): void {
+  log.info(call.transaction.hash.toHexString()+" "+"handlebatchBuyWithERC20s",[]);
+  
+  let buyEntity = BuyEntity.load(call.transaction.from.toHex())
 
-  // Entity fields can be set based on event parameters
-  entity.previousOwner = event.params.previousOwner
-  entity.newOwner = event.params.newOwner
+  if (!buyEntity) {
+    buyEntity = new BuyEntity(call.transaction.from.toHex())
+    buyEntity.ethAmount=new BigInt(0)
+    buyEntity.token=["0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"]
+    buyEntity.tokenAmount=[new BigInt(0)]
+  }
+  buyEntity.ethAmount = call.transaction.value.plus(buyEntity.ethAmount)
+  log.info(call.transaction.from.toHex()+" "+"ethAmount"+" "+buyEntity.ethAmount.toString(),[]);
+  let getToken=false
 
-  // Entities can be written to the store with `.save()`
-  entity.save()
+  for(let i=0;i<call.inputs.erc20Details.tokenAddrs.length;i++){
+    for(let j=0;j<buyEntity.token.length;j++){
+      if(call.inputs.erc20Details.tokenAddrs[i].toHexString()==buyEntity.token[j]){
+        let tokenAmout=buyEntity.tokenAmount
+        tokenAmout[j]=tokenAmout[j].plus(call.inputs.erc20Details.amounts[i])
+        buyEntity.tokenAmount=tokenAmout
+        log.info(call.transaction.from.toHex()+" "+buyEntity.token[j]+" "+buyEntity.tokenAmount[j].toString(),[]);
+        getToken=true
+      }
+    }
+    if(getToken==false){
+      let tokens=buyEntity.token
+      let tokenAmouts=buyEntity.tokenAmount
+      tokens.push(call.inputs.erc20Details.tokenAddrs[i].toHexString())
+      tokenAmouts.push(call.inputs.erc20Details.amounts[i])
+      buyEntity.token=tokens
+      buyEntity.tokenAmount=tokenAmouts
+      log.info(call.transaction.from.toHex()+" "+call.inputs.erc20Details.tokenAddrs[i].toHexString()+" "+call.inputs.erc20Details.amounts[i].toString(),[]);
+    }
+  }
+  buyEntity.save()
+}
 
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
 
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.GOV(...)
-  // - contract.affiliates(...)
-  // - contract.baseFees(...)
-  // - contract.converter(...)
-  // - contract.guardian(...)
-  // - contract.marketRegistry(...)
-  // - contract.onERC1155BatchReceived(...)
-  // - contract.onERC1155Received(...)
-  // - contract.onERC721Received(...)
-  // - contract.onERC721Received(...)
-  // - contract.openForFreeTrades(...)
-  // - contract.openForTrades(...)
-  // - contract.owner(...)
-  // - contract.punkProxy(...)
-  // - contract.sponsoredMarkets(...)
-  // - contract.supportsInterface(...)
+export function handleBatchBuyFromOpenSeaCall(call: BatchBuyFromOpenSeaCall): void {
+  log.info(call.transaction.hash.toHexString()+" "+"BatchBuyFromOpenSeaCall",[]);
+  let buyEntity = BuyEntity.load(call.transaction.from.toHex())
+
+  if (!buyEntity) {
+    buyEntity = new BuyEntity(call.transaction.from.toHex())
+    buyEntity.ethAmount=new BigInt(0)
+    buyEntity.token=["0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"]
+    buyEntity.tokenAmount=[new BigInt(0)]
+  }
+  buyEntity.ethAmount = call.transaction.value.plus(buyEntity.ethAmount)
+  log.info(call.transaction.from.toHex()+" "+"ethAmount"+" "+buyEntity.ethAmount.toString(),[]);
+  buyEntity.save()
 }

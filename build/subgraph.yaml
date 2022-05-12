@@ -1,0 +1,28 @@
+specVersion: 0.0.2
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Contract
+    network: mainnet
+    source:
+      address: "0x83C8F28c26bF6aaca652Df1DbBE0e1b56F8baBa2"
+      abi: Contract
+      startBlock: 14752582
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - BuyEntity
+      abis:
+        - name: Contract
+          file: Contract/abis/Contract.json
+      callHandlers:
+        - function: batchBuyWithETH((uint256,uint256,bytes)[])
+          handler: handlebatchBuyWithETH
+        - function: batchBuyWithERC20s((address[],uint256[]),(uint256,uint256,bytes)[],(bytes)[],address[])
+          handler: handlebatchBuyWithERC20s
+        - function: batchBuyFromOpenSea((uint256,bytes)[])
+          handler: handleBatchBuyFromOpenSeaCall
+      file: Contract/Contract.wasm
