@@ -42,30 +42,12 @@ export class BuyEntity extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get ethAmount(): BigInt {
-    let value = this.get("ethAmount");
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
     return value!.toBigInt();
   }
 
-  set ethAmount(value: BigInt) {
-    this.set("ethAmount", Value.fromBigInt(value));
-  }
-
-  get token(): Array<string> {
-    let value = this.get("token");
-    return value!.toStringArray();
-  }
-
-  set token(value: Array<string>) {
-    this.set("token", Value.fromStringArray(value));
-  }
-
-  get tokenAmount(): Array<BigInt> {
-    let value = this.get("tokenAmount");
-    return value!.toBigIntArray();
-  }
-
-  set tokenAmount(value: Array<BigInt>) {
-    this.set("tokenAmount", Value.fromBigIntArray(value));
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
   }
 }

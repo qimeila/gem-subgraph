@@ -32,7 +32,7 @@ export class OwnershipTransferred__Params {
   }
 }
 
-export class Contract__affiliatesResult {
+export class gemswapv1__affiliatesResult {
   value0: Address;
   value1: boolean;
 
@@ -49,7 +49,7 @@ export class Contract__affiliatesResult {
   }
 }
 
-export class Contract__sponsoredMarketsResult {
+export class gemswapv1__sponsoredMarketsResult {
   value0: BigInt;
   value1: boolean;
 
@@ -66,9 +66,9 @@ export class Contract__sponsoredMarketsResult {
   }
 }
 
-export class Contract extends ethereum.SmartContract {
-  static bind(address: Address): Contract {
-    return new Contract("Contract", address);
+export class gemswapv1 extends ethereum.SmartContract {
+  static bind(address: Address): gemswapv1 {
+    return new gemswapv1("gemswapv1", address);
   }
 
   GOV(): Address {
@@ -86,14 +86,14 @@ export class Contract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  affiliates(param0: BigInt): Contract__affiliatesResult {
+  affiliates(param0: BigInt): gemswapv1__affiliatesResult {
     let result = super.call(
       "affiliates",
       "affiliates(uint256):(address,bool)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return new Contract__affiliatesResult(
+    return new gemswapv1__affiliatesResult(
       result[0].toAddress(),
       result[1].toBoolean()
     );
@@ -101,7 +101,7 @@ export class Contract extends ethereum.SmartContract {
 
   try_affiliates(
     param0: BigInt
-  ): ethereum.CallResult<Contract__affiliatesResult> {
+  ): ethereum.CallResult<gemswapv1__affiliatesResult> {
     let result = super.tryCall(
       "affiliates",
       "affiliates(uint256):(address,bool)",
@@ -112,7 +112,10 @@ export class Contract extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new Contract__affiliatesResult(value[0].toAddress(), value[1].toBoolean())
+      new gemswapv1__affiliatesResult(
+        value[0].toAddress(),
+        value[1].toBoolean()
+      )
     );
   }
 
@@ -420,14 +423,14 @@ export class Contract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  sponsoredMarkets(param0: BigInt): Contract__sponsoredMarketsResult {
+  sponsoredMarkets(param0: BigInt): gemswapv1__sponsoredMarketsResult {
     let result = super.call(
       "sponsoredMarkets",
       "sponsoredMarkets(uint256):(uint256,bool)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
-    return new Contract__sponsoredMarketsResult(
+    return new gemswapv1__sponsoredMarketsResult(
       result[0].toBigInt(),
       result[1].toBoolean()
     );
@@ -435,7 +438,7 @@ export class Contract extends ethereum.SmartContract {
 
   try_sponsoredMarkets(
     param0: BigInt
-  ): ethereum.CallResult<Contract__sponsoredMarketsResult> {
+  ): ethereum.CallResult<gemswapv1__sponsoredMarketsResult> {
     let result = super.tryCall(
       "sponsoredMarkets",
       "sponsoredMarkets(uint256):(uint256,bool)",
@@ -446,7 +449,7 @@ export class Contract extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new Contract__sponsoredMarketsResult(
+      new gemswapv1__sponsoredMarketsResult(
         value[0].toBigInt(),
         value[1].toBoolean()
       )
@@ -878,6 +881,132 @@ export class MultiAssetSwapCallConverstionDetailsStruct extends ethereum.Tuple {
 }
 
 export class MultiAssetSwapCallTradeDetailsStruct extends ethereum.Tuple {
+  get marketId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get value(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get tradeData(): Bytes {
+    return this[2].toBytes();
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCall extends ethereum.Call {
+  get inputs(): MultiAssetSwapWithoutFeeCall__Inputs {
+    return new MultiAssetSwapWithoutFeeCall__Inputs(this);
+  }
+
+  get outputs(): MultiAssetSwapWithoutFeeCall__Outputs {
+    return new MultiAssetSwapWithoutFeeCall__Outputs(this);
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCall__Inputs {
+  _call: MultiAssetSwapWithoutFeeCall;
+
+  constructor(call: MultiAssetSwapWithoutFeeCall) {
+    this._call = call;
+  }
+
+  get erc20Details(): MultiAssetSwapWithoutFeeCallErc20DetailsStruct {
+    return changetype<MultiAssetSwapWithoutFeeCallErc20DetailsStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
+  }
+
+  get erc721Details(): Array<MultiAssetSwapWithoutFeeCallErc721DetailsStruct> {
+    return this._call.inputValues[1].value.toTupleArray<
+      MultiAssetSwapWithoutFeeCallErc721DetailsStruct
+    >();
+  }
+
+  get erc1155Details(): Array<
+    MultiAssetSwapWithoutFeeCallErc1155DetailsStruct
+  > {
+    return this._call.inputValues[2].value.toTupleArray<
+      MultiAssetSwapWithoutFeeCallErc1155DetailsStruct
+    >();
+  }
+
+  get converstionDetails(): Array<
+    MultiAssetSwapWithoutFeeCallConverstionDetailsStruct
+  > {
+    return this._call.inputValues[3].value.toTupleArray<
+      MultiAssetSwapWithoutFeeCallConverstionDetailsStruct
+    >();
+  }
+
+  get tradeDetails(): Array<MultiAssetSwapWithoutFeeCallTradeDetailsStruct> {
+    return this._call.inputValues[4].value.toTupleArray<
+      MultiAssetSwapWithoutFeeCallTradeDetailsStruct
+    >();
+  }
+
+  get dustTokens(): Array<Address> {
+    return this._call.inputValues[5].value.toAddressArray();
+  }
+
+  get sponsoredMarketIndex(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCall__Outputs {
+  _call: MultiAssetSwapWithoutFeeCall;
+
+  constructor(call: MultiAssetSwapWithoutFeeCall) {
+    this._call = call;
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCallErc20DetailsStruct extends ethereum.Tuple {
+  get tokenAddrs(): Array<Address> {
+    return this[0].toAddressArray();
+  }
+
+  get amounts(): Array<BigInt> {
+    return this[1].toBigIntArray();
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCallErc721DetailsStruct extends ethereum.Tuple {
+  get tokenAddr(): Address {
+    return this[0].toAddress();
+  }
+
+  get to(): Array<Address> {
+    return this[1].toAddressArray();
+  }
+
+  get ids(): Array<BigInt> {
+    return this[2].toBigIntArray();
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCallErc1155DetailsStruct extends ethereum.Tuple {
+  get tokenAddr(): Address {
+    return this[0].toAddress();
+  }
+
+  get ids(): Array<BigInt> {
+    return this[1].toBigIntArray();
+  }
+
+  get amounts(): Array<BigInt> {
+    return this[2].toBigIntArray();
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCallConverstionDetailsStruct extends ethereum.Tuple {
+  get conversionData(): Bytes {
+    return this[0].toBytes();
+  }
+}
+
+export class MultiAssetSwapWithoutFeeCallTradeDetailsStruct extends ethereum.Tuple {
   get marketId(): BigInt {
     return this[0].toBigInt();
   }

@@ -3,12 +3,12 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: Contract
+    name: gemswapv2
     network: mainnet
     source:
       address: "0x83C8F28c26bF6aaca652Df1DbBE0e1b56F8baBa2"
-      abi: Contract
-      startBlock: 14752582
+      abi: gemswapv2
+      startBlock: 14232817
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -16,8 +16,8 @@ dataSources:
       entities:
         - BuyEntity
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: gemswapv2
+          file: ./abis/gemswapv2.json
       callHandlers:
         - function: batchBuyWithETH((uint256,uint256,bytes)[])
           handler: handlebatchBuyWithETH
@@ -25,4 +25,68 @@ dataSources:
           handler: handlebatchBuyWithERC20s
         - function: batchBuyFromOpenSea((uint256,bytes)[])
           handler: handleBatchBuyFromOpenSeaCall
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: gemswapv1
+    network: mainnet
+    source:
+      address: "0xF24629fbb477E10F2CF331c2B7452d8596B5C7a5"
+      abi: gemswapv1
+      startBlock: 13968435
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - BuyEntity
+      abis:
+        - name: gemswapv1
+          file: ./abis/gemswapv1.json
+      callHandlers:
+        - function: batchBuyWithETH((uint256,uint256,bytes)[])
+          handler: handlebatchBuyWithETH
+        - function: batchBuyWithERC20s((address[],uint256[]),(uint256,uint256,bytes)[],(bytes)[],address[])
+          handler: handlebatchBuyWithERC20s
+        - function: batchBuyFromOpenSea((uint256,bytes)[])
+          handler: handleBatchBuyFromOpenSeaCall
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: singlecheckoutv1
+    network: mainnet
+    source:
+      address: "0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b"
+      abi: wyvernv1
+      startBlock: 13807635
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - BuyEntity
+      abis:
+        - name: wyvernv1
+          file: ./abis/wyvernv1.json
+      eventHandlers:
+        - event: OrdersMatched(bytes32,bytes32,indexed address,indexed address,uint256,indexed bytes32)
+          handler: handleOrdersMatched
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: singlecheckoutv2
+    network: mainnet
+    source:
+      address: "0x7f268357A8c2552623316e2562D90e642bB538E5"
+      abi: wyvernv2
+      startBlock: 14249010
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - BuyEntity
+      abis:
+        - name: wyvernv2
+          file: ./abis/wyvernv2.json
+      eventHandlers:
+        - event: OrdersMatched(bytes32,bytes32,indexed address,indexed address,uint256,indexed bytes32)
+          handler: handleOrdersMatchedwyvernv2
       file: ./src/mapping.ts

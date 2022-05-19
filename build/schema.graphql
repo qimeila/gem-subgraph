@@ -1,6 +1,4 @@
 type BuyEntity @entity {
   id: String!
-  ethAmount: BigInt!
-  token: [String!]!
-  tokenAmount: [BigInt!]!
+  blockNumber: BigInt!
 }
